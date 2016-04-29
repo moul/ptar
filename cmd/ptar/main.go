@@ -2,9 +2,12 @@ package main
 
 import (
 	"archive/tar"
+	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"runtime"
+	"sync"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/jessevdk/go-flags"
@@ -52,7 +55,36 @@ func main() {
 		if opts.File == "-" {
 			logrus.Fatalf("Using stdout as target is not compatible with parent mode.  You need to set the --affinity of the process.")
 		}
-		logrus.Fatalf("Parent mode is not yet implemented.  You need to specify --affinity.")
+
+		// prepare sub-commands
+		commands := make([]*exec.Cmd, opts.Chunks)
+		for i := 0; i < opts.Chunks; i++ {
+			childArgs := append([]string{
+				fmt.Sprintf("--affinity=%d", i),
+				"-c",
+				"-f", fmt.Sprintf("%s.%d", opts.File, i),
+				"-C", fmt.Sprintf("%d", opts.Chunks),
+			}, args...)
+			logrus.Infof("child(%d): running %s %v", i, os.Args[0], childArgs)
+			commands[i] = exec.Command(os.Args[0], childArgs...)
+			commands[i].Stdout = os.Stdout
+			commands[i].Stderr = os.Stderr
+		}
+
+		// call sub-commands in parallel
+		var wg sync.WaitGroup
+		for i := 0; i < opts.Chunks; i++ {
+			wg.Add(1)
+			go func(idx int) {
+				command := commands[idx]
+				command.Run()
+				wg.Done()
+			}(i)
+		}
+
+		// wait for all commands to finish
+		wg.Wait()
+
 	} else { // child mode
 		var f io.Writer
 		var err error
