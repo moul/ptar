@@ -76,6 +76,11 @@ INFO[0000] + .git/objects/f1/7f6d1ee8f09de64d4b126625d33bdc208a3ff6
 INFO[0000] + .git/objects/pack/pack-3a210da928ef49fde1c519dde1cd6d2c22a9d4a6.idx
 INFO[0000] + .git/refs/remotes/origin/HEAD
 INFO[0000] + LICENSE
+$ ls -la /tmp/test.tar*
+-rw-r--r--  1 moul  wheel  3789312 Apr 30 09:28 /tmp/test.tar.0
+-rw-r--r--  1 moul  wheel     9728 Apr 30 09:28 /tmp/test.tar.1
+-rw-r--r--  1 moul  wheel    22016 Apr 30 09:28 /tmp/test.tar.2
+-rw-r--r--  1 moul  wheel    25088 Apr 30 09:28 /tmp/test.tar.3
 ```
 
 ## License
