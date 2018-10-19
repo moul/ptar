@@ -1,4 +1,7 @@
 # ptar
+
+[![GuardRails badge](https://badges.production.guardrails.io/moul/ptar.svg)](https://www.guardrails.io)
+
 :ant: parallel tar (SMP)
 
 ## Usage
